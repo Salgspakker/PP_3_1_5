@@ -25,7 +25,7 @@
                 <td> <label for="password">Password</label>
                     <input id = "password" name="Age" th:field="*{password}" >
                 </td>
-<!--                <td>-->
+                <td>
                     <input type="submit" value="Edit">
                 </td>
             </tr>
@@ -34,8 +34,21 @@
                 <td><p th:if="${#fields.hasErrors('username')}" th:errorclass="error" th:errors="*{username}"></p></td>
                 <td><p th:if="${#fields.hasErrors('lastname')}" th:errorclass="error" th:errors="*{lastname}"></p></td>
                 <td><p th:if="${#fields.hasErrors('age')}" th:errorclass="error" th:errors="*{age}"></p></td></tr>
-            <td><p th:if="${#fields.hasErrors('password')}" th:errorclass="error" th:errors="*{password}"></p></td></tr>
-<!--            <td><p th:if="${#fields.hasErrors('roles')}" th:errorclass="error" th:errors="*{roles}"></p></td></tr>-->
+                <td><p th:if="${#fields.hasErrors('password')}" th:errorclass="error" th:errors="*{password}"></p></td>
+            </tr>
+            <tr>
+                <td>
+                    <th:block th:each="role: ${roles}" required>
+                        <input
+                                type="checkbox"
+                                th:name="selectedRoles"
+                                th:text="${role}"
+                                th:value="${role}"
+                                th:checked="${role.getRole().equals('ROLE_USER')}"
+                        />
+                    </th:block>
+                </td>
+            </tr>
         </table>
     </form>
 </div>

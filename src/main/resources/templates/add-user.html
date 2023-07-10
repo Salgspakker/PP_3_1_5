@@ -23,8 +23,6 @@
         <td>
           <input type="submit" value="Add">
         </td>
-      </tr>
-
       <tr>
         <td>
           <p th:if="${#fields.hasErrors('username')}" th:errorclass="error" th:errors="*{username}"></p>
@@ -34,6 +32,19 @@
         </td>
         <td>
           <p th:if="${#fields.hasErrors('age')}" th:errorclass="error" th:errors="*{age}"></p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <th:block th:each="role: ${roles}" required>
+            <input
+                    type="checkbox"
+                    th:name="selectedRoles"
+                    th:text="${role}"
+                    th:value="${role}"
+                    th:checked="${role.getRole().equals('ROLE_USER')}"
+            />
+          </th:block>
         </td>
       </tr>
     </table>
