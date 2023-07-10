@@ -16,7 +16,7 @@ public class User implements UserDetails {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @Column(name="username")
     @NotNull(message = "User's name cannot be empty.")
@@ -47,18 +47,18 @@ public class User implements UserDetails {
 
     public User() {}
 
-    public User(int id, @NotNull String username, @NotNull String lastname, int age) {
+    public User(Long id, @NotNull String username, @NotNull String lastname, int age) {
         this.id = id;
         this.username = username;
         this.lastname = lastname;
         this.age = age;
     }
 
-    public int getId() {
+    public Long getId() {
         return this.id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
