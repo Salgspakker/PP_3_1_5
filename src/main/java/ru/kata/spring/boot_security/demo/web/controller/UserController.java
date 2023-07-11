@@ -20,15 +20,15 @@ import java.util.*;
 public class UserController {
 
     private final UserService userService;
+    private final RoleService roleService;
     @Autowired
-    private RoleService roleService;
-    @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, RoleService roleService) {
+        this.roleService = roleService;
         this.userService = userService;
     }
 
     @GetMapping(value = "/user")
-    public String setPage(ModelMap model) {
+    public String userViewNavigate(ModelMap model) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         System.out.println(user);
         model.addAttribute("user", userService.findByUsername(user.getUsername()));
@@ -36,19 +36,19 @@ public class UserController {
     }
 
     @GetMapping(value = "/admin")
-    public String printAllUsers(ModelMap model) {
+    public String adminViewNavigate(ModelMap model) {
         model.addAttribute("users", userService.allUsers());
         return "admin";
     }
 
-    @RequestMapping(value = "/delete/{id}")
-    private String deleteUser(@PathVariable(name = "id") String id){
+    @RequestMapping(value = "/admin/delete/{id}")
+    private String deleteUserRequest(@PathVariable(name = "id") String id){
         userService.delete(userService.getById(Long.valueOf(id)));
         return "redirect:/admin";
     }
 
-    @GetMapping(value = "/edit/{id}")
-    private String editUser(@PathVariable(name = "id") int id, Model model) {
+    @GetMapping(value = "/admin/edit/{id}")
+    private String editUserViewNavigate(@PathVariable(name = "id") int id, Model model) {
         User user = userService.getById((long) id);
         user.setPassword("");
         model.addAttribute("user", user);
@@ -56,8 +56,8 @@ public class UserController {
         return "edit-user";
     }
 
-    @PostMapping(value = "/edit")
-    public String editUserPage(@RequestParam(value = "selectedRoles", required = false) String[] selectedRoles, @Valid @ModelAttribute("user") User user, BindingResult result, Model model) {
+    @PostMapping(value = "/admin/edit")
+    public String editUserRequest(@RequestParam(value = "selectedRoles", required = false) String[] selectedRoles, @Valid @ModelAttribute("user") User user, BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("roles", roleService.allRoles());
             return "edit-user";
@@ -71,15 +71,15 @@ public class UserController {
         return "redirect:/admin";
     }
 
-    @GetMapping("/addView")
-    public String addUserPage(Model model) {
+    @GetMapping("/admin/addView")
+    public String addUserViewNavigate(Model model) {
         model.addAttribute("user", new User());
         model.addAttribute("roles", roleService.allRoles());
         return "add-user";
     }
 
-    @PostMapping("/add")
-    public String addUser(@RequestParam(value = "selectedRoles", required = false) String[] selectedRoles, @ModelAttribute("user") @Valid User user, BindingResult result, Model model) {
+    @PostMapping("/admin/add")
+    public String addUserRequest(@RequestParam(value = "selectedRoles", required = false) String[] selectedRoles, @ModelAttribute("user") @Valid User user, BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("roles", roleService.allRoles());
             return "add-user";

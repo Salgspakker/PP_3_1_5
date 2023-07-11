@@ -7,7 +7,7 @@
 </head>
 <body>
 <div>
-    <form method="POST"  action = "#" th:action="@{/edit}" th:object="${user}">
+    <form method="POST"  action = "#" th:action="@{/admin/edit}" th:object="${user}">
         <table>
             <tr>
                 <td> <input type= hidden readonly="readonly" name="Id" th:value="${user.id}">
