@@ -1,6 +1,4 @@
 package ru.kata.spring.boot_security.demo.web.model;
-
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,22 +9,22 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = { @UniqueConstraint(columnNames = "username") })
 public class User implements UserDetails {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="username")
-    @NotNull(message = "User's name cannot be empty.")
-    @Pattern(regexp="^[A-ZА-Я][a-zа-я]*$",message = "Invalid Input")
+    @Column(name="username", unique = true)
+    @NotNull(message = "Username cannot be empty.")
+    @Pattern(regexp="^[A-ZА-Яa-zа-я]*$",message = "Invalid Input")
     private String username;
 
-    @Column(name = "lastname")
-    @NotNull(message = "User's Last Name cannot be empty.")
+    @Column(name = "name")
+    @NotNull(message = "User's Name cannot be empty.")
     @Pattern(regexp="^[A-ZА-Я][a-zа-я]*$",message = "Invalid Input")
-    private String lastname;
+    private String name;
 
     @Column(name = "age")
     @Min(value = 1, message = "User's age cannot be less than 1.")
@@ -37,7 +35,7 @@ public class User implements UserDetails {
     @NotNull
     private String password;
 
-    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user"),
@@ -47,10 +45,10 @@ public class User implements UserDetails {
 
     public User() {}
 
-    public User(Long id, @NotNull String username, @NotNull String lastname, int age) {
+    public User(Long id, @NotNull String username, @NotNull String name, int age) {
         this.id = id;
         this.username = username;
-        this.lastname = lastname;
+        this.name = name;
         this.age = age;
     }
 
@@ -66,8 +64,8 @@ public class User implements UserDetails {
         return this.username;
     }
 
-    public void setUsername(@NotNull String name) {
-        this.username = name;
+    public void setUsername(@NotNull String username) {
+        this.username = username;
     }
 
     public int getAge() {
@@ -78,12 +76,12 @@ public class User implements UserDetails {
         this.age = age;
     }
 
-    public @NotNull String getLastname() {
-        return this.lastname;
+    public @NotNull String getName() {
+        return this.name;
     }
 
-    public void setLastname(@NotNull String lastName) {
-        this.lastname = lastName;
+    public void setName(@NotNull String name) {
+        this.name = name;
     }
 
     public void setRoles (Set<Role> roles) {
@@ -95,18 +93,12 @@ public class User implements UserDetails {
     }
 
     @Override
-    public String toString() {
-        return this.id + " " + this.username + " " + this.lastname + " " + this.age + " ";
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles();
-    }
-
-    @Override
     public String getPassword() {
         return this.password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
 
@@ -130,8 +122,14 @@ public class User implements UserDetails {
         return true;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return getRoles();
+    }
+
+    @Override
+    public String toString() {
+        return this.id + " " + this.username + " " + this.name + " " + this.age + " ";
     }
 }
 

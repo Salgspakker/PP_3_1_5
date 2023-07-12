@@ -17,13 +17,13 @@ public class Role implements GrantedAuthority {
 
     @ManyToMany(mappedBy = "roles")
     @Column
-    private Set <User> users;
+    private Set<User> users;
 
-    public Set <User> getUsers() {
+    public Set<User> getUsers() {
         return users;
     }
 
-    public void setUsers(Set < User > users) {
+    public void setUsers(Set<User> users) {
         this.users = users;
     }
     public void setId(Long id) {
@@ -51,5 +51,4 @@ public class Role implements GrantedAuthority {
     public String toString() {
         return this.role;
     }
-
 }
