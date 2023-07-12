@@ -24,5 +24,6 @@
     </table>
 </div>
     <a th:href="@{/logout}">Logout</a>
+    <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/admin}">Administrating</a>
 </body>
 </html>

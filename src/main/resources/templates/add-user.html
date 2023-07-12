@@ -26,6 +26,7 @@
       <tr>
         <td>
           <p th:if="${#fields.hasErrors('username')}" th:errorclass="error" th:errors="*{username}"></p>
+          <p th:if="${#fields.hasErrors('global')}" th:each="err : ${#fields.errors('global')}" th:text="${err}" class="error" />
         </td>
         <td>
           <p th:if="${#fields.hasErrors('name')}" th:errorclass="error" th:errors="*{name}"></p>

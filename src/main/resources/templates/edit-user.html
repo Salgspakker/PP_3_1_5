@@ -31,7 +31,9 @@
             </tr>
             <tr>
                 <td></td>
-                <td><p th:if="${#fields.hasErrors('username')}" th:errorclass="error" th:errors="*{username}"></p></td>
+                <td><p th:if="${#fields.hasErrors('username')}" th:errorclass="error" th:errors="*{username}"></p>
+                    <p th:if="${#fields.hasErrors('global')}" th:each="err : ${#fields.errors('global')}" th:text="${err}" class="error" />
+                </td>
                 <td><p th:if="${#fields.hasErrors('name')}" th:errorclass="error" th:errors="*{name}"></p></td>
                 <td><p th:if="${#fields.hasErrors('age')}" th:errorclass="error" th:errors="*{age}"></p></td></tr>
                 <td><p th:if="${#fields.hasErrors('password')}" th:errorclass="error" th:errors="*{password}"></p></td>

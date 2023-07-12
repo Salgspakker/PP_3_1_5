@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.web.model;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import ru.kata.spring.boot_security.demo.web.validation.UniqueField;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -9,14 +10,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "users", uniqueConstraints = { @UniqueConstraint(columnNames = "username") })
+@Table(name = "users")
+@UniqueField
 public class User implements UserDetails {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="username", unique = true)
+    @Column(name="username")
     @NotNull(message = "Username cannot be empty.")
     @Pattern(regexp="^[A-ZА-Яa-zа-я]*$",message = "Invalid Input")
     private String username;
