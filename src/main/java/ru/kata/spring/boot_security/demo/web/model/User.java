@@ -19,22 +19,22 @@ public class User implements UserDetails {
     private Long id;
 
     @Column(name="username")
-    @NotNull(message = "Username cannot be empty.")
+    @NotEmpty(message = "Username cannot be empty.")
     @Pattern(regexp="^[A-ZА-Яa-zа-я]*$",message = "Invalid Input")
     private String username;
 
     @Column(name = "name")
-    @NotNull(message = "User's Name cannot be empty.")
-    @Pattern(regexp="^[A-ZА-Я][a-zа-я]*$",message = "Invalid Input")
+    @NotEmpty(message = "Name cannot be empty.")
+    @Pattern(regexp="^[A-ZА-Яa-zа-я]*$",message = "Invalid Input")
     private String name;
 
     @Column(name = "age")
+    @NotNull(message = "Age cannot be empty")
     @Min(value = 1, message = "User's age cannot be less than 1.")
     @Max(value = 150, message = "User's age cannot be over 150.")
-    private int age;
+    private Integer age;
 
     @Column(name = "password")
-    @NotNull
     private String password;
 
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
@@ -70,7 +70,7 @@ public class User implements UserDetails {
         this.username = username;
     }
 
-    public int getAge() {
+    public @NotNull(message = "Can't be empty") @Min(value = 1, message = "User's age cannot be less than 1.") @Max(value = 150, message = "User's age cannot be over 150.") Integer getAge() {
         return this.age;
     }
 

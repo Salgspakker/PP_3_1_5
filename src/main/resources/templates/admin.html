@@ -3,56 +3,347 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>Spring Security Example</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
 </head>
 <body>
-    <table border="1">
-        <tr>
-            <th>Id</th>
-            <th>Username</th>
-            <th>Name</th>
-            <th>Age</th>
-            <th>Roles</th>
-        </tr>
-        <tr th:each="user : ${users}">
-                <td th:text="${user.id}"></td>
-                <td th:text="${user.username}"></td>
-                <td th:text="${user.name}"></td>
-                <td th:text="${user.age}"></td>
-            <td>
-                <table>
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+        <div>
+                <div th:object="${user}" class="text-white" th:text="${user.username}+ ' with Role: '+${user.roles}"></div>
+        </div>
+        <a th:href="@{/logout}" class="text-white">Logout</a>
+    </div>
+</nav>
+
+<div class = row>
+    <div class="d-flex flex-column flex-shrink-0 p-3" style="width: 280px;">
+        <div class="col-2">
+            <form>
+                <nav class="nav nav-pills nav flex-column">
+                    <a class="nav-link active" aria-current="page" href="/admin/">Admin</a>
+                    <a class="nav-link" href="/user/">User</a>
+                </nav>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-8 bg-light"  >
+        <div class="tab-pane fade show active"
+             id="v-pills-admin"
+             role="tabpanel"
+             aria-labelledby="v-pills-admin-tab"
+             tabindex="0">
+            <h3>Admin panel</h3>
+            <ul class="nav nav-tabs" id="myTab">
+                <li class="nav-item" role="presentation" id="first_tab">
+                    <button class="nav-link active" id="user_table-tab" data-bs-toggle="tab"
+                            data-bs-target="#user_table" type="button" role="tab" aria-controls="user_table"
+                            aria-selected="true"
+                    > User table </button>
+                </li>
+                <li class="nav-item" >
+                    <a href="#new_user" class="nav-link" id="new_user-tab" data-bs-toggle="tab" data-bs-target="#new_user"
+                            type="button" role="tab" aria-controls="new_user" aria-selected="false">New user
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content"  id="Admin_panel-tabContent">
+                <div class="tab-pane fade show active" id="user_table" role="tabpanel"
+                     aria-labelledby="user_table-tab">
+                    <div class="container-fluid border">
+                        <h4>All users</h4>
+                    </div>
+                    <div class="container-fluid bg-white border">
+                    <table class="table table-striped bg-white" style="background-color: #F7F7F7">
+                    <thead>
                     <tr>
-                        <td th:each="role: ${user.roles}">
+                        <th scope="col">Id</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Age</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Edit</th>
+                        <th scope="col">Delete</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.id}"></td>
+                        <td th:text="${user.username}"></td>
+                        <td th:text="${user.name}"></td>
+                        <td th:text="${user.age}"></td>
+                        <td>
+                        <table>
+                            <tr>
+                            <td th:each="role: ${user.roles}">
                             <span th:text="${role.role}"> </span>
+                            </td>
+                            </tr>
+                        </table>
+                        </td>
+                        <td><button type="button"
+                                    class="btn btn-info"
+                                    data-row="${user}"
+                                    data-bs-toggle="modal"
+                                    style="color: white"
+                            th:attr="data-bs-target='#editModal'+${user.id}"
+                            >
+                            Edit
+                        </button>
+                                <div th:object="${user}" th:fragment = "modal" class="modal fade"  th:id="editModal+${user.id}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="editModalLabel">Edit user</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                    <form method="POST" th:action="@{/admin/{id}/edit(id=${user.id})}">
+                                                        <div class="row bg-white border">
+                                                        <div class="col">
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label for="id" class="form-label d-flex justify-content-center"><b>Id</b></label>
+                                                                <input type="text"
+                                                                       disabled="disabled" id="id" name="id" readonly="readonly" th:value="*{id}">
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="edit-username" class="form-label d-flex justify-content-center"><b>Username</b></label>
+                                                                <input type="text"
+                                                                       id="edit-username" name="username" th:value="*{username}">
+                                                                <div th:object="${update_user}">
+                                                                    <div class="text text-danger" th:if="${#fields.hasErrors('username')}" th:errors="${update_user.username}"></div>
+                                                                    <div class="text text-danger" th:if="${#fields.hasErrors('global')}" th:each="err : ${#fields.errors('global')}" th:text="${err}"></div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="edit-name" class="form-label d-flex justify-content-center"><b>Name</b></label>
+                                                                <input type="text"
+                                                                       id="edit-name" name="name" th:value="*{name}">
+                                                                <div th:object="${update_user}">
+                                                                    <div class="text text-danger" th:if="${#fields.hasErrors('name')}" th:errors="${update_user.name}"></div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="edit-age" class="form-label d-flex justify-content-center"><b>Age</b></label>
+                                                                <input type="number"   id="edit-age"
+                                                                       aria-describedby="emailHelp" name="age" th:value="*{age}">
+                                                                <div th:object="${update_user}">
+                                                                    <div class="text text-danger" th:if="${#fields.hasErrors('age')}" th:errors="${update_user.age}"></div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="edit-password" class="form-label d-flex justify-content-center"><b>Password</b></label>
+                                                                <input type="password"
+                                                                       id="edit-password" name="password">
+                                                                <div th:object="${update_user}">
+                                                                    <div class="text text-danger" th:if="${#fields.hasErrors('password')}" th:errors="${update_user.password}"></div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <div class="form-group"
+                                                                     style="margin: 5px 0; text-align: center">
+                                                                    <label for="rolesEdit">Roles</label>
+                                                                    <select multiple class="form-control"
+                                                                            name="roles" size="2"
+                                                                            id="rolesEdit"
+                                                                            th:value="${user.roles}">
+                                                                        <option selected="selected"
+                                                                                value="1">USER
+                                                                        </option>
+                                                                        <option value="2">ADMIN</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                        </div>
+                                                    </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                                Close</button>
+                                                            <button type="submit"
+                                                                    class="btn btn-primary">
+                                                                Edit
+                                                            </button>
+                                                        </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        </td>
+                        <td><button type="button"
+                                    class="btn btn-danger"
+                                    data-row="${user}"
+                                    data-bs-toggle="modal"
+                                    th:attr="data-bs-target='#deleteModal'+${user.id}"
+                        >
+                            Delete
+                        </button>
+                            <!--                                Modal-->
+                            <div th:fragment = "modal" class="modal fade"  th:id="deleteModal+${user.id}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteModalLabel">Delete user</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+
+                                            <form method="POST" th:action="@{/admin/delete/{id}(id=${user.id})}"
+                                                  th:object="${user}">
+
+                                                <div class="row bg-white border">
+                                                    <div class="col">
+                                                    </div>
+
+                                                    <div class="col">
+                                                        <div class="mb-3">
+                                                            <label for="delete-id" class="form-label d-flex justify-content-center"><b>Id</b></label>
+                                                            <input type="text" readonly="readonly" disabled="disabled"
+                                                                   id="delete-id" name="id" th:value="*{id}">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="delete-username" class="form-label d-flex justify-content-center"><b>Username</b></label>
+                                                            <input type="text" readonly="readonly" disabled="disabled"
+                                                                   id="delete-username" name="username" th:value="*{username}">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="delete-name" class="form-label d-flex justify-content-center"><b>Name</b></label>
+                                                            <input type="text" readonly="readonly" disabled="disabled"
+                                                                   id="delete-name" name="name" th:value="*{name}">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="delete-age" class="form-label d-flex justify-content-center"><b>Age</b></label>
+                                                            <input type="number"   id="delete-age" readonly="readonly" disabled="disabled"
+                                                                   aria-describedby="emailHelp" name="age" th:value="*{age}">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="delete-password" class="form-label d-flex justify-content-center"><b>Password</b></label>
+                                                            <input type="password" readonly="readonly" disabled="disabled"
+                                                                   id="delete-password" name="password">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <div class="form-group "
+                                                                 style="margin: 5px 0; text-align: center">
+                                                                <label for="delete-roles">Roles</label>
+                                                                <select multiple class="form-control" disabled="disabled"
+                                                                        name="roles" size="2"
+                                                                        id="delete-roles"
+                                                                        th:value="${user.roles}">
+                                                                    <option selected="selected"
+                                                                            value="1">USER
+                                                                    </option>
+                                                                    <option value="2">ADMIN</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                        Close</button>
+                                                    <button type="submit"
+                                                            class="btn btn-primary">
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </td>
                     </tr>
-                </table>
-            </td>
-            <td>
-                <a th:href="@{admin/delete/__${user.id}__}" class="btn btn-danger">Delete</a>
-            </td>
-            <td>
-                <a th:href="@{admin/edit/__${user.id}__}" class="btn btn-danger">Edit</a>
-            </td>
-        </tr>
-    </table>
-</div>
-<div>
-    <table>
-    <tr>
-        <td>
-            <a th:href="@{admin/addView}" class="btn btn-danger">Add </a>
-        </td>
-        <td>
-            <a th:href="@{/logout}">Logout</a>
-        </td>
-        <td>
-            <a th:href="@{/user}">Info</a>
-        </td>
-    </tr>
-</table>
-</div>
+                    </tbody>
+                    </table>
+                    </div>
+                </div>
+                <div th:object="${update_user}">
+                    <script th:inline="javascript" th:if="${hasErrors}">
+                        var myModal = new bootstrap.Modal(document.getElementById('editModal' + [[${update_user.id}]]), {
+                            keyboard: false
+                        })
+                        myModal.show()
+                    </script>
+                </div>
 
-
+<!--           New User tab-->
+                <div class="tab-pane fade" id="new_user" role="tabpanel" aria-labelledby="profile-tab">
+                    <div class="container">
+                        <div class="row bg-white border">
+                            <div class="text bg-light border"><h4>Add new user</h4></div>
+                            <div class="col">
+                            </div>
+                            <div class="col">
+                                <form id="formForNewUser" method="POST" th:object="${add_user}" th:action="@{/admin/add}" >
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label d-flex justify-content-center"><b>Username</b></label>
+                                        <input type="text"  class="form-control"
+                                               id="username" name="username" aria-describedby="emailHelp">
+                                        <div th:object="${add_user}">
+                                        <div class="text text-danger" th:if="${#fields.hasErrors('username')}" th:errors="${add_user.username}"></div></div>
+                                        <div class="text text-danger" th:if="${#fields.hasErrors('global')}" th:each="err : ${#fields.errors('global')}" th:text="${err}"></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="name" class="form-label d-flex justify-content-center"><b>Name</b></label>
+                                        <input type="text"  class="form-control"
+                                               id="name" name="name">
+                                            <div class="text text-danger" th:if="${#fields.hasErrors('name')}" th:errors="${add_user.name}"></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="age" class="form-label d-flex justify-content-center"><b>Age</b></label>
+                                        <input type="number"  class="form-control" id="age"
+                                               aria-describedby="emailHelp" name="age">
+                                        <div class="text text-danger" th:if="${#fields.hasErrors('age')}" th:errors="${add_user.age}"></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label d-flex justify-content-center"><b>Password</b></label>
+                                        <input type="password"  class="form-control"
+                                               id="password" name="password">
+                                        <div class="text text-danger" th:if="${#fields.hasErrors('password')}" th:errors="${add_user.password}"></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-group"
+                                             style="margin: 5px 0; text-align: center">
+                                            <label for="rolesEdit">Roles</label>
+                                            <select multiple class="form-control"
+                                                    name="roles" size="2"
+                                                    id="roles">
+                                                <option selected="selected" value="1">USER
+                                                </option>
+                                                <option value="2">ADMIN</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 d-flex justify-content-center">
+                                        <button type="submit" class="btn btn-success">Add new User</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col">
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                <div th:object="${add_user}">
+                    <script th:inline="javascript" th:if="${addError}">
+                        var triggerEl = document.querySelector('#myTab a[href="#new_user"]')
+                        var firstTab = new bootstrap.Tab(triggerEl)
+                        bootstrap.Tab.getInstance(triggerEl).show()
+                        firstTab.show()
+                    </script>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
