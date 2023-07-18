@@ -17,7 +17,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/user")
-    public String newUserViewNavigate(ModelMap model) {
+    public String userNavigate(ModelMap model) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("user", userService.findByUsername(user.getUsername()));
         return "user";

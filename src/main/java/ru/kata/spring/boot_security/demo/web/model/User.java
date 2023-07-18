@@ -70,7 +70,7 @@ public class User implements UserDetails {
         this.username = username;
     }
 
-    public @NotNull(message = "Can't be empty") @Min(value = 1, message = "User's age cannot be less than 1.") @Max(value = 150, message = "User's age cannot be over 150.") Integer getAge() {
+    public @NotNull(message = "Age cannot be empty") @Min(value = 1, message = "User's age cannot be less than 1.") @Max(value = 150, message = "User's age cannot be over 150.") Integer getAge() {
         return this.age;
     }
 
