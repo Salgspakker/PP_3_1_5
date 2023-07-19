@@ -12,9 +12,10 @@
 <body>
 <nav class="navbar navbar-dark bg-dark">
     <div class="container-fluid">
-        <div>
-            <div class="text-white" th:text="${user.username}+ ' with Role: '+${user.roles}"></div>
-        </div>
+       <span>
+            <span th:object="${user}" class="text-white" style="font-weight: bold; display: inline-block; white-space: nowrap;" th:utext="${user.username}"></span>
+            <span style="align-self: start;  display: inline-block; white-space: nowrap;" class="text-white" th:text=" 'with Role:' + ${user.roles}"></span>
+        </span>
         <a th:href="@{/logout}" class="text-white">Logout</a>
     </div>
 </nav>
