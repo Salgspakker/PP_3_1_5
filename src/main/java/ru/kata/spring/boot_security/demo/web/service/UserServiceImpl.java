@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.web.model.User;
 import ru.kata.spring.boot_security.demo.web.repository.UserRepository;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -41,7 +42,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getById(Long id) {
+    public User findById(Long id) {
         return userRepository.getById(id);
     }
 
@@ -49,6 +50,11 @@ public class UserServiceImpl implements UserService {
     public void save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+    }
+
+    @Override
+    public Optional<User> getById(Long id) {
+        return userRepository.findById(id);
     }
 
     @Override
