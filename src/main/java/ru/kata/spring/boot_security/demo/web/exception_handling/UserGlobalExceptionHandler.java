@@ -15,9 +15,16 @@ public class UserGlobalExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<UserIncorrectData> handleException(Exception exception) {
+    public ResponseEntity<UserIncorrectData> handleException(UserValidationException exception) {
         UserIncorrectData userIncorrectData = new UserIncorrectData();
         userIncorrectData.setInfo(exception.getMessage());
         return new ResponseEntity<>(userIncorrectData, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<UserIncorrectData> handleException(Exception exception) {
+        UserIncorrectData userIncorrectData = new UserIncorrectData();
+        userIncorrectData.setInfo(exception.getMessage());
+        return new ResponseEntity<>(userIncorrectData, HttpStatus.BAD_GATEWAY);
     }
 }

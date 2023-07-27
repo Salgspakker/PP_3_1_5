@@ -21,7 +21,7 @@ class UniqueValidator implements ConstraintValidator<UniqueField, User> {
         User userFound = userService.findByUsername(user.getUsername());
         try {
             return userFound == null ||
-                    user.getId() == userFound.getId();
+                    user.getId().equals(userFound.getId());
         } catch (Exception e) {
             return false;
         }

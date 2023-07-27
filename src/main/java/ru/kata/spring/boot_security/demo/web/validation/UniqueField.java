@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = UniqueValidator.class)
 public @interface UniqueField {
-    String message() default "Username is taken";
+    String message() default "Username is already taken";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

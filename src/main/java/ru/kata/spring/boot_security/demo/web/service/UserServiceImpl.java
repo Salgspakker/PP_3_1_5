@@ -37,7 +37,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void edit(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        String passwordFromRequest = user.getPassword();
+        //if password not set during user change take it from DB instead
+        if (passwordFromRequest == null || passwordFromRequest.isEmpty()) {
+            user.setPassword(userRepository.getById(user.getId()).getPassword());
+        } else {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
         userRepository.save(user);
     }
 

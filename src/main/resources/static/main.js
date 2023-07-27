@@ -1,6 +1,4 @@
 const tableNode = document.querySelector('.tbody');
-const usersTableCard = $('#users_table_card');
-const newUserCard = $('#new_user_card');
 
 class Role {
     constructor(id) {
@@ -8,18 +6,12 @@ class Role {
     }
 }
 
-
-
 $(document).ready(function () {
-
-    window.addEventListener('load', getDatabase);
-
+    window.addEventListener('load', getUsersToTable);
 });
 
-let output = ``
-
-
-async function getDatabase() {
+async function getUsersToTable() {
+    let output = ``
     await fetch("http://localhost:8080/api/users")
         .then((response) => {
     return response.json();
@@ -31,7 +23,6 @@ async function getDatabase() {
         user.roles.forEach((role) => {
             roles += role.role + " ";
         })
-
         output += `
            <tr id=${user.id}>
   <td>${user.id}</td>
@@ -117,7 +108,7 @@ async function getDatabase() {
 </tr>
 
 `})
-    tableNode.innerHTML =""
+    tableNode.innerHTML = ""
     tableNode.innerHTML += output;
 })}
 
@@ -202,7 +193,7 @@ function showDeleteModal(id) {
         .catch((err) => {
             console.log(err);
         })
-    document.querySelector('#del').addEventListener('click', delUser);
+    document.querySelector('#del').addEventListener('click', deleteUser);
 }
 
 function showEditModal(id) {
@@ -258,10 +249,9 @@ function showEditModal(id) {
                         <label for="password" class="form-label d-flex justify-content-center"><b>Password</b></label>
                          <input class="form-control"
                          type="password"
-                         value="${data.password}"
                          name="password"
                          id="password"
-                         readonly>
+                         >
 
                     </div>
                  <div class="mb-3">
@@ -283,10 +273,10 @@ function showEditModal(id) {
         .catch((err) => {
             console.log(err);
         })
-    document.querySelector('#edit').addEventListener('click', editInfoUser);
+    document.querySelector('#edit').addEventListener('click', updateUser);
 }
 
-async function delUser() {
+async function deleteUser() {
     const formData = await new FormData(await document.querySelector("#formDeleteUser"));
     let id = formData.get('id');
     console.log(id);
@@ -297,7 +287,7 @@ async function delUser() {
         }).then(resp => {
             console.log(resp)
             $('#deleteModal').modal('hide')
-        }).then(getDatabase);
+        }).then(getUsersToTable);
 
     } catch (e) {
         alert(e.name)
@@ -306,8 +296,7 @@ async function delUser() {
 
 }
 
-//POST-request with new user
-async function newUser() {
+async function addUser() {
     const url = "http://localhost:8080/api/users";
     let form = null;
     const formData = await new FormData(form = await document.querySelector("#newUserForm"));
@@ -321,51 +310,40 @@ async function newUser() {
         roles: roles
     }
     console.log(data)
+    let response;
     try {
-        fetch(url, {
+        response = fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
             },
             body: JSON.stringify(data)
-        }).then(resp => resp.json()).then(data => {
+        }).then(resp => {
+            if (!resp?.ok) {
+                console.log('not ok')
+                return resp.json().then((user) => {
+                        console.log(user)
+                        alert(user.info)
+                    })
+            }}).then(data => {
             form.reset();
-        })
+            }).then(getUsersToTable)
     } catch (err) {
         alert(err.name);
+        console.log('yes I got it here')
         console.log(err)
     }
 
+    $('.new-user-table-tab').removeClass('active show');
+    $('.user-table-tab').addClass('active show')
+    $('.new-user-tab-pane').removeClass('active show');
+    $('.user-tab-pane').addClass('active show')
 }
 
-document.querySelector("#addNewUserBtn").addEventListener('click', newUser);
-usersTableCard.click(() => {
-    if (!usersTableCard.attr('class').includes('active')) {
-        getDatabase();
-        usersTableCard.attr('class', "nav-link active");
-        newUserCard.attr('class', "nav-link text-primary");
 
-        //change body into div Card
-        document.querySelector('.secondCard').style.display = "none";
-        document.querySelector('.firstCard').style.display = "block";
-    }
-})
-newUserCard.click(() => {
-    if (!newUserCard.attr('class').includes("active")) {
-        newUserCard.attr('class', "nav-link active");
-        usersTableCard.attr('class', "nav-link text-primary");
+document.querySelector("#addNewUserBtn").addEventListener('click', addUser);
 
-        //change body into div Card
-        document.querySelector('.secondCard').style.display = "block";
-        document.querySelector('.firstCard').style.display = "none";
-    }
-});
-
-//function for show modal
-
-
-// action of editing user
-async function editInfoUser() {
+async function updateUser() {
     const formData = await new FormData(await document.querySelector("#formEditUser"));
     const existingRoles = Array.from(formData.getAll('roles'))
     let roles = (existingRoles).map(role => new Role(role));
@@ -386,10 +364,17 @@ async function editInfoUser() {
                 'Content-Type': 'application/json;charset=utf-8'
             },
             body: JSON.stringify(data)
-        }).then(resp => resp.json()).then(data => {
+        }).then(resp => {
+            if (!resp?.ok) {
+                console.log('not ok')
+                return resp.json().then((user) => {
+                    console.log(user)
+                    alert(user.info)
+                })
+            }}).then(data => {
             console.log("Edit user with id: " + formData.get('id'))
             $('#editModal').modal('hide');
-            getDatabase();
+            getUsersToTable();
         })
     } catch (err) {
         console.log(err);

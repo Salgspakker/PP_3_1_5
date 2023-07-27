@@ -3,26 +3,30 @@ package ru.kata.spring.boot_security.demo.web.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.web.exception_handling.NoSuchUserException;
+import ru.kata.spring.boot_security.demo.web.exception_handling.UserValidationException;
 import ru.kata.spring.boot_security.demo.web.model.User;
 import ru.kata.spring.boot_security.demo.web.service.UserService;
+import ru.kata.spring.boot_security.demo.web.validation.ValidationResultHandler;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
-public class MyRestController {
+public class AdminRestController {
 
     UserService userService;
 
-    public MyRestController() {
+    public AdminRestController() {
 
     }
 
     @Autowired
-    public MyRestController(UserService userService) {
+    public AdminRestController(UserService userService) {
         this.userService = userService;
     }
 
@@ -37,7 +41,7 @@ public class MyRestController {
         if (user.isEmpty()) {
             throw new NoSuchUserException("No user with id " + id + " found in database");
         }
-        return new ResponseEntity<User>(user.get(), HttpStatus.OK);
+        return new ResponseEntity<>(user.get(), HttpStatus.OK);
     }
 
     @GetMapping("/users/username/{username}")
@@ -46,17 +50,25 @@ public class MyRestController {
         if (user == null) {
             throw new NoSuchUserException("No user with username " + username + " found in database");
         }
-        return new ResponseEntity<User>(user, HttpStatus.OK);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PostMapping("/users")
-    public User addNewUser(@RequestBody User user) {
+    public ResponseEntity<User> addNewUser(@Valid @RequestBody User user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            ValidationResultHandler validationResultHandler = new ValidationResultHandler();
+            throw new UserValidationException(validationResultHandler.handleBindingResult(bindingResult));
+        }
         userService.save(user);
-        return user;
+        return ResponseEntity.ok(user);
     }
 
     @PutMapping("/users")
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
+    public ResponseEntity<User> updateUser(@Valid @RequestBody User user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            ValidationResultHandler validationResultHandler = new ValidationResultHandler();
+            throw new UserValidationException(validationResultHandler.handleBindingResult(bindingResult));
+        }
         userService.edit(user);
         return ResponseEntity.ok(user);
     }
