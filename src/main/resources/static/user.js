@@ -1,11 +1,10 @@
-const tableNode = document.querySelector('.tbody');
+const userInfoTbody = document.querySelector('.userInfoTbody');
 
-$(document).ready(function () {
-    window.addEventListener('load', getDatabase);
+$(document).ready(function() {
+    window.addEventListener('load', getUserInfoToTable);
 });
 
-async function getDatabase() {
-
+async function getUserInfoToTable() {
     let output = ``
     await fetch("http://localhost:8080/auth/info")
         .then((response) => {
@@ -13,19 +12,20 @@ async function getDatabase() {
         })
         .then((user) => {
             output = "";
-                let roles = "";
-                user.roles.forEach((role) => {
-                    roles += role.role + " ";
-                })
+            let roles = "";
+            user.roles.forEach((role) => {
+                roles += role.role + " ";
+            })
 
-                output += `
-           <tr id=${user.id}>
-  <td>${user.id}</td>
-  <td>${user.username}</td>
-  <td>${user.name}</td>
-  <td>${user.age}</td>
-  <td>${roles}</td>
-</tr>`
-            tableNode.innerHTML = ""
-            tableNode.innerHTML += output;
-        })}
+            output += `
+            <tr id=${user.id}>
+                <td>${user.id}</td>
+                <td>${user.username}</td>
+                <td>${user.name}</td>
+                <td>${user.age}</td>
+                <td>${roles}</td>
+            </tr>`
+            userInfoTbody.innerHTML = ""
+            userInfoTbody.innerHTML += output;
+        })
+}
