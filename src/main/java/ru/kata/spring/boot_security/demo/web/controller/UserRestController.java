@@ -27,7 +27,7 @@ public class UserRestController {
     @GetMapping("/info")
     public ResponseEntity<User> getUser(Principal principal) {
         User user = userService.findByUsername(principal.getName());
-        if(user == null) {
+        if (user == null) {
             throw new NoSuchUserException("No user with name " + principal.getName() + " found in database");
         }
         return ResponseEntity.ok(userService.findByUsername(principal.getName()));

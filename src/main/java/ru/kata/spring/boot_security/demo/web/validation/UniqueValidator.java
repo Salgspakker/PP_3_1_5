@@ -26,7 +26,6 @@ class UniqueValidator implements ConstraintValidator<UniqueField, User> {
             return false;
         }
     }
-
 }
 
 

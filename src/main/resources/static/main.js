@@ -61,7 +61,7 @@ async function getUsersToTable() {
                                       Close
                                       </button>
                                       <button type="submit"
-                                         id="edit"
+                                         id="editModalEditUsrBtn"
                                          class="btn btn-primary">
                                       Edit
                                       </button>
@@ -92,7 +92,7 @@ async function getUsersToTable() {
                                       <button type="button" class="btn btn-secondary" data-dismiss="modal">
                                       Close</button>
                                       <button
-                                         id="del"
+                                         id="deleteModalDeleteUsrBtn"
                                          type="button"
                                          class="btn btn-danger">
                                       Delete
@@ -188,7 +188,7 @@ function showDeleteModal(id) {
         .catch((err) => {
             console.log(err);
         })
-    document.querySelector('#del').addEventListener('click', deleteUser);
+    document.querySelector('#deleteModalDeleteUsrBtn').addEventListener('click', deleteUser);
 }
 
 function showEditModal(id) {
@@ -264,7 +264,7 @@ function showEditModal(id) {
         .catch((err) => {
             console.log(err);
         })
-    document.querySelector('#edit').addEventListener('click', updateUser);
+    document.querySelector('#editModalEditUsrBtn').addEventListener('click', updateUser);
 }
 
 async function deleteUser() {
