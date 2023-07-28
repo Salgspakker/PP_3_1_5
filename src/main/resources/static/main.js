@@ -5,13 +5,12 @@ class Role {
         this.id = id;
     }
 }
-
+let output = ``
 $(document).ready(function() {
-    window.addEventListener('load', getUsersToTable);
+    window.addEventListener('load', getUsersToTable());
 });
 
 async function getUsersToTable() {
-    let output = ``
     await fetch("http://localhost:8080/api/users")
         .then((response) => {
             return response.json();

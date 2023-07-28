@@ -1,8 +1,6 @@
 const userInfoTbody = document.querySelector('.userInfoTbody');
 
-$(document).ready(function() {
-    window.addEventListener('load', getUserInfoToTable);
-});
+
 
 async function getUserInfoToTable() {
     let output = ``
@@ -29,3 +27,10 @@ async function getUserInfoToTable() {
             userInfoTbody.innerHTML += output;
         })
 }
+
+function alertCustom() {
+    alert("YES2")
+}
+$(document).ready(function() {
+    window.addEventListener('load', getUserInfoToTable());
+});
